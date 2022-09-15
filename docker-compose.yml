@@ -1,0 +1,23 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:14.2-alpine3.15
+    container_name: movies-api-db
+    hostname: postgres
+    environment:
+      - POSTGRES_DB=${DB_NAME:-movies-api-db}
+      - POSTGRES_USER=${DB_USER:-postgres}
+      - POSTGRES_PASSWORD=${DB_PASS:-admin}
+    command: -p ${DB_PORT:-5432}
+  app:
+    depends_on:
+      - postgres
+    build: .
+    container_name: movies-api
+    hostname: app
+    ports:
+      - '${SERVER_PORT:-3000}:${SERVER_PORT:-3000}'
+    volumes:
+      - './:/usr/app'
+    command: npm run start:dev
